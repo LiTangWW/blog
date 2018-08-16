@@ -24,7 +24,7 @@ const sessions = {
 
 // 通过 token 获取 user_id， 完成认证过程
 function getUserIdByToken (token) {
-  return sessions[user_id]
+  return sessions[token]
 }
 ```
 
@@ -138,7 +138,7 @@ const jwt = base64.encode(header) + '.' + base64.encode(payload) + '.' + sign
 const jwt = require('jsonwebtoken')
 
 // 假设验证码为字符验证码，字符为 ACDE，10分钟失效
-const token = jwt.sign({ userId: 10085 }, 'ACDE', { expiresIn: 60 * 10 })
+const token = jwt.sign({ userId: 10085 }, secrect + 'ACDE', { expiresIn: 60 * 10 })
 ```
 
 ### 邮箱校验
@@ -166,7 +166,7 @@ const link = `https://example.com/code=${code}`
 因为 jwt 无状态，不保存用户设备信息，没法单纯使用它完成以上问题，可以再利用数据库保存一些状态完成。
 
 + session: 只需要把 user_id 对应的 token 清掉即可
-+ jwt: 使用 redis，维护一张黑名单，用户注销时加入黑名单，过期时间与 jwt 的过期时间保持一致。
++ jwt: 使用 redis，维护一张黑名单，用户注销时加入黑名单(签名)，过期时间与 jwt 的过期时间保持一致。
 
 ### 如何允许用户只能在一个设备登录，如微信
 
@@ -182,7 +182,7 @@ const link = `https://example.com/code=${code}`
 
 对于这个需求，jwt 略简单些，而使用 session 还需要多维护一张 token 表。
 
-### 如何使某一用户踢掉除现有设备外的其它所有设备，如诸多播放器
+### 如何允许用户只能在最近五个设备登录，而且使某一用户踢掉除现有设备外的其它所有设备，如诸多播放器
 
 + session: 在上一个问题的基础上，删掉该设备以外其它所有的token记录。
 + jwt: 在上一个问题的基础上，对 count + 5，并对该设备重新赋值为新的 count。
