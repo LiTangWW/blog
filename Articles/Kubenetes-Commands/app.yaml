@@ -39,7 +39,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: node
+        image: node:8-alpine
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -70,22 +70,3 @@ spec:
         command: ["node"]
         args: ["-e", "require('http').createServer((req, res) => res.end('hello, world')).listen(8080)"]
 
----
-
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  name: hello
-  namespace: dev
-  labels:
-    name: nginx
-spec:
-  template:
-    metadata:
-      labels:
-        name: nginx
-    spec:
-      containers:
-      - name: nginx
-        image: nginx
-        imagePullPolicy: Always
